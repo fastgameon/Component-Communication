@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angula
 import { IProduct } from './product';
 import { ProductService } from './product.service';
 import { NgModel } from '@angular/forms';
+import { CriteriaComponent } from '../shared/criteria/criteria.component';
 
 @Component({
     templateUrl: './product-list.component.html',
@@ -30,24 +31,32 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     //     this.performFilter(this._listFilter);
     // }
     // if we directly access an element we use viewchild to make it strongly type used type=ElementRef
-    @ViewChild('inputFilter') inputFilterRef: ElementRef;
-    @ViewChild(NgModel) inputFilter: NgModel;
-    listFilter: string;
+    // @ViewChild('inputFilter') inputFilterRef: ElementRef;
+    // @ViewChild(NgModel) inputFilter: NgModel;
+    // listFilter: string;
+
+    parentlistFilter: string;
+    includeDetails: boolean = true;
+    hitCount: number;
+    @ViewChild(CriteriaComponent) filterComponent: CriteriaComponent;
     constructor(private productService: ProductService) { }
 
     // initialize view element
     ngAfterViewInit() {
-        console.log(this.inputFilterRef);
-        this.inputFilterRef.nativeElement.focus();
-        this.inputFilter.valueChanges.subscribe(() => {
-            this.performFilter(this.listFilter);
-        });
+        // console.log(this.inputFilterRef);
+        // this.inputFilterRef.nativeElement.focus();
+        // this.inputFilter.valueChanges.subscribe(() => {
+        //     this.performFilter(this.listFilter);
+        // });
+
+        // get child component
+        this.parentlistFilter = this.filterComponent.listFilter;
     }
     ngOnInit(): void {
         this.productService.getProducts().subscribe(
             (products: IProduct[]) => {
                 this.products = products;
-                this.performFilter(this.listFilter);
+                this.performFilter(this.parentlistFilter);
             },
             (error: any) => this.errorMessage = <any>error
         );

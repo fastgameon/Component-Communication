@@ -7,3 +7,8 @@
                    [ngModel]='listFilter' (ngModelChange)="onFilterChane($event)" /> -->
   </div>
 </div>
+<div class="row" *ngIf="showDetails">
+  <div class="col-md-10">
+    <h3>{{ hitMessage }}</h3>
+  </div>
+</div>

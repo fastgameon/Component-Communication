@@ -8,7 +8,12 @@ import { IProduct } from '../product';
 })
 export class ProductShellDetailComponent implements OnInit {
     pageTitle: string = 'Product Detail';
-
+    // this will not work for change detection
+    // product=this.productService.currentProduct;
+    // For change detection we use getter to get current value
+    get product(): IProduct | null {
+        return this.productService.currentProduct;
+    }
     constructor(private productService: ProductService) { }
 
     ngOnInit() {

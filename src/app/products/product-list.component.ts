@@ -4,6 +4,7 @@ import { IProduct } from './product';
 import { ProductService } from './product.service';
 import { NgModel } from '@angular/forms';
 import { CriteriaComponent } from '../shared/criteria/criteria.component';
+import { ProductParameterService } from './product-parameter.service';
 
 @Component({
     templateUrl: './product-list.component.html',
@@ -12,7 +13,7 @@ import { CriteriaComponent } from '../shared/criteria/criteria.component';
 export class ProductListComponent implements OnInit, AfterViewInit {
     pageTitle: string = 'Product List';
     // listFilter: string;
-    showImage: boolean;
+    // showImage: boolean;
 
     imageWidth: number = 50;
     imageMargin: number = 2;
@@ -39,8 +40,18 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     includeDetails: boolean = true;
     hitCount: number;
     @ViewChild(CriteriaComponent) filterComponent: CriteriaComponent;
-    constructor(private productService: ProductService) { }
+    get showImage(): boolean {
+        return this.productParameterService.showImage;
+    }
+    set showImage(value: boolean) {
+        this.productParameterService.showImage = value;
+    }
+    constructor(private productService: ProductService, private productParameterService: ProductParameterService) { }
 
+    onValueChange(value: string): void {
+        this.productParameterService.filterBy = value;
+        this.performFilter(value);
+    }
     // initialize view element
     ngAfterViewInit() {
         // console.log(this.inputFilterRef);
@@ -56,7 +67,8 @@ export class ProductListComponent implements OnInit, AfterViewInit {
         this.productService.getProducts().subscribe(
             (products: IProduct[]) => {
                 this.products = products;
-                this.performFilter(this.parentlistFilter);
+                // this.performFilter(this.parentlistFilter);
+                this.filterComponent.listFilter = this.productParameterService.filterBy;
             },
             (error: any) => this.errorMessage = <any>error
         );

@@ -8,14 +8,22 @@ import { of } from 'rxjs/observable/of';
 import { catchError, tap } from 'rxjs/operators';
 
 import { IProduct } from './product';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class ProductService {
     private productsUrl = 'api/products';
     private product: IProduct[];
-    currentProduct: IProduct | null;
+    // currentProduct: IProduct | null;
+    // private selectedProductSubject = new Subject<IProduct | null>();
+    private selectedProductSubject = new BehaviorSubject<IProduct | null>(null);
+    selectedProductChaange$ = this.selectedProductSubject.asObservable();
     constructor(private http: HttpClient) { }
 
+    changeSelectedProduct(selectedProduct: IProduct | null) {
+        this.selectedProductSubject.next(selectedProduct);
+    }
     getProducts(): Observable<IProduct[]> {
         // TODO: ADD a experiation logic
         if (this.product) {
@@ -69,7 +77,8 @@ export class ProductService {
                     const foundIndex = this.product.findIndex(item => item.id === id);
                     if (foundIndex > -1) {
                         this.product.splice(foundIndex, 1);
-                        this.currentProduct = null;
+                        // this.currentProduct = null;
+                        this.changeSelectedProduct(null);
                     }
                 }),
                 catchError(this.handleError)
@@ -85,7 +94,8 @@ export class ProductService {
                 tap(data => {
                     this.product.push(data);
                     // after crreating a new product it is autometically set to current product
-                    this.currentProduct = data;
+                    // this.currentProduct = data;
+                    this.changeSelectedProduct(data);
                 }),
                 catchError(this.handleError)
             );

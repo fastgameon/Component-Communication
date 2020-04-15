@@ -11,10 +11,11 @@ export class ProductShellListComponent implements OnInit {
   pageTitle: string = 'Products';
   errorMessage: string;
   products: IProduct[];
-
+  selectedProduct: IProduct | null;
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
+    this.productService.selectedProductChaange$.subscribe(selectedProduct => this.selectedProduct = selectedProduct);
     this.productService.getProducts().subscribe(
       (products: IProduct[]) => {
         this.products = products;
@@ -23,7 +24,8 @@ export class ProductShellListComponent implements OnInit {
     );
   }
   onSelectedProduc(product: IProduct) {
-    this.productService.currentProduct = product;
+    // this.productService.currentProduct = product;
+    this.productService.changeSelectedProduct(product);
   }
 
 }
